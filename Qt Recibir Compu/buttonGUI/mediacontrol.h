@@ -11,6 +11,8 @@ public:
     void init();
     int statePlay();
     int statePause();
+    int stateUp();
+    int stateDown();
 
 };
 

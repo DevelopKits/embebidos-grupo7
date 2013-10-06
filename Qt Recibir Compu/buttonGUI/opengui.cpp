@@ -13,26 +13,27 @@ OpenGUI::OpenGUI(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(handleButton()));
     connect(ui->pushButton_1, SIGNAL(clicked()), this, SLOT(handleButtonPause()));
-    connect(ui->horizontalSlider, SIGNAL(sliderMoved(int)), this, SLOT(controlvolumen(int)));
+    connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(handleButtonUp()));
+    connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(handleButtonDown()));
 }
 
-OpenGUI::~OpenGUI()
-{
+OpenGUI::~OpenGUI(){
     delete ui;
 }
 
-void OpenGUI::handleButton()
-{
-
+void OpenGUI::handleButton(){
     admin->statePlay();
 }
 
-void OpenGUI::handleButtonPause()
-{
+void OpenGUI::handleButtonPause(){
     admin->statePause();
 }
 
-/*void OpenGUI::controlvolumen(int n)
-{
-    admin->stateVolumen(n);
-}*/
+void OpenGUI::handleButtonUp(){
+    admin->stateUp();
+}
+
+void OpenGUI::handleButtonDown(){
+    admin->stateDown();
+}
+
