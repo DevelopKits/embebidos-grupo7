@@ -8,9 +8,10 @@ class MediaControl
 
 public:
     MediaControl();
-    void init();
-    int statePlay(const char *);
-
+    int init();
+    int statePlay(const char*);
+    int statePause();
+    int seekTime(int);
 };
 
 #endif // MEDIA_CTRL_H

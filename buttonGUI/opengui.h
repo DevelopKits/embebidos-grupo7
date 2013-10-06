@@ -22,6 +22,9 @@ public:
 private slots:
     void handleButton();
     void handlePlay();
+    void handlePause();
+    void handleSeek();
+    void handleNext();
 
 private:
     Ui::OpenGUI *ui;
