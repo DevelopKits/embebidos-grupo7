@@ -5,12 +5,13 @@ GUI_OPTS="-qws"
 PIDFILE="/var/run/music-gui.pid"
 
 test -x "$musicgui" || exit 0
+/etc/init.d/matrix-gui-2.0 stop
 
 case "$1" in
   start)
     if [ -e $PIDFILE ]; then
         PIDDIR=/proc/$(cat $PIDFILE)
-        if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${matrixgui}" ]; then
+        if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${musicgui}" ]; then
           echo "$DESC already started; not starting."
         else
           echo "Removing stale PID file $PIDFILE."
@@ -24,7 +25,7 @@ case "$1" in
     ;;
    
    stop)
-    echo -n "Stopping Matrix GUI application"
+    echo -n "Stopping Music GUI application"
     start-stop-daemon --stop --quiet --pidfile $PIDFILE
     echo "."
     ;;
