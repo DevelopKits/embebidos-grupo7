@@ -5,14 +5,40 @@
 GstElement *pipeline, *source, *mad, *audioconvert, *rtpL16pay, *udpsink;
 //GMainLoop *loop;
 
+
 char actual_song[128];
 
 MediaControl::MediaControl()
 {
+}
 
+MediaControl::~MediaControl()
+{
+    g_print ("END APP\n");
 }
 
 
+int MediaControl::getSongPos()
+{
+    gint64 pos;
+    GstFormat fmt = GST_FORMAT_TIME;
+    if (gst_element_query_position (pipeline, &fmt, &pos)){
+        return pos / GST_SECOND;
+    }
+    g_print ("getSongPos() Failed\n");
+    return -1;
+}
+
+int MediaControl::getSongLen()
+{
+    gint64 len;
+    GstFormat fmt = GST_FORMAT_TIME;
+    if (gst_element_query_duration (pipeline, &fmt, &len)){
+        return len / GST_SECOND;
+    }
+    g_print ("getSongLen() Failed\n");
+    return -1;
+}
 
 int MediaControl::init()
 {
@@ -78,6 +104,7 @@ int MediaControl::statePlay(const char *song_name)
 
 int MediaControl::seekTime(int second)
 {
+    gst_element_set_state (pipeline, GST_STATE_PAUSED);
     gint64 time_nanoseconds = second * GST_SECOND;
     g_print ("seek: %llu!\n", time_nanoseconds);
     if (!gst_element_seek (pipeline, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
@@ -86,6 +113,7 @@ int MediaControl::seekTime(int second)
         g_print ("Seek failed!\n");
         return -1;
     }
+    gst_element_set_state (pipeline, GST_STATE_PLAYING);
     g_print ("Seek done\n");
     return 0;
 }

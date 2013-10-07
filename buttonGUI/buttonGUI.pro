@@ -27,3 +27,6 @@ HEADERS  += opengui.h \
     mediacontrol.h
 
 FORMS    += opengui.ui
+
+RESOURCES += \
+    MyResourses.qrc

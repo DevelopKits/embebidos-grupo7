@@ -4,58 +4,102 @@
 #include <stdlib.h>
 #include <QDebug>
 #include <dirent.h>
+#include <QMovie>
+#include <QtCore/QTimer>
+#include <QtCore/QTime>
 
-
-
-MediaControl *admin = new MediaControl;
+MediaControl *admin;
 int actualIndex = 0;
+QMovie *movie;
+QTimer m_positionTimer;
+bool USB_in = false;
 
 
 OpenGUI::OpenGUI(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OpenGUI)
 {
+    admin = new MediaControl();
     ui->setupUi(this);
     connect(ui->pushButton_1, SIGNAL(clicked()), this, SLOT(handleButton()));
     connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(handlePlay()));
     connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(handlePause()));
     connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(handleSeek()));
     connect(ui->pushButton_5, SIGNAL(clicked()), this, SLOT(handleNext()));
+    connect(ui->pushButton_6, SIGNAL(clicked()), this, SLOT(handlePrev()));
+    connect(ui->horizontalSlider, SIGNAL(sliderMoved(int)), this, SLOT(handleSlider(int)));
+    connect(&m_positionTimer, SIGNAL(timeout()), this, SLOT(handleUpdate()));
     admin->init();
+
+    movie = new QMovie(":/images/equ.gif");
+    //QLabel *processLabel = new QLabel(this);
+    ui->gif_label->setMovie(movie);
+    movie->start();
+    movie->setPaused(true);
+    handleButton();
 }
 
 OpenGUI::~OpenGUI()
 {
+
     delete ui;
+}
+
+void OpenGUI::updateSlider(bool is_playing)
+{
+    if(is_playing){
+        m_positionTimer.start(1000);
+    } else {
+        m_positionTimer.stop();
+    }
 }
 
 void OpenGUI::handlePlay()
 {
+    if(USB_in){
+        qDebug("Current index: %d", ui->comboBox_1->currentIndex());
 
-    qDebug("Current index: %d", ui->comboBox_1->currentIndex());
+        //QString root = "/media/sda1/";
+        QString root = "/home/ldiego/Incrustados/";
+        int index = ui->comboBox_1->currentIndex();
+        actualIndex = index;
+        root.append(ComboList.at(index));
 
-    //QString root = "/media/sda1/";
-    QString root = "/home/ldiego/Incrustados/";
-    int index = ui->comboBox_1->currentIndex();
-    actualIndex = index;
-    root.append(ComboList.at(index));
-    ui->label_1->setText(root);
+        QByteArray byteArray = root.toUtf8();
+        const char* song_name = byteArray.constData();
 
-    QByteArray byteArray = root.toUtf8();
-    const char* song_name = byteArray.constData();
+        qDebug() << "file name:" << song_name << "in handlePlay()";
+        admin->statePlay(song_name);
 
+        ui->label_1->setText("Playing: " + ComboList.at(actualIndex));
+        movie->setPaused(false);
 
-    qDebug() << "file name: " << song_name << " in handlePlay()";
-    admin->statePlay(song_name);
+        sleep(1);
+
+        int max_len = admin->getSongLen();
+        qDebug() << "song length:" << max_len << "seconds.";
+        if(max_len > 0) ui->horizontalSlider->setMaximum(max_len);
+        updateSlider(true);
+    } else {
+        ui->label_1->setText("Please connect USB data");
+    }
 }
 
 void OpenGUI::handlePause()
 {
-    admin->statePause();
+    if(USB_in){
+        admin->statePause();
+        ui->label_1->setText("Paused...");
+        updateSlider(false);
+        movie->setPaused(true);
+    } else {
+        ui->label_1->setText("Please connect USB data");
+    }
 }
 
 void OpenGUI::handleButton()
 {
+
     DIR *dir;
     struct dirent *ent;
     //if ((dir = opendir ("/media/sda1/")) != NULL) {
@@ -70,37 +114,83 @@ void OpenGUI::handleButton()
         closedir (dir);
     } else {
         /* could not open directory */
+        USB_in = false;
         qDebug("ERROR NO OPEN DIR");
     }
     ui->comboBox_1->clear();
     ui->comboBox_1->addItems(ComboList);
+    if(ui->comboBox_1->count() > 0) USB_in = true;
 
 }
 
 void OpenGUI::handleSeek()
 {
-    int test = 30;
-    admin->seekTime(test);
+    if(USB_in){
+        int test = 30;
+        admin->seekTime(test);
+    } else {
+        ui->label_1->setText("Please connect USB data");
+    }
 }
 
 void OpenGUI::handleNext()
 {
-    if((ui->comboBox_1->count() - 1) > actualIndex){
+    if(((ui->comboBox_1->count() - 1) > actualIndex) && USB_in){
         actualIndex += 1;
         QString root = "/home/ldiego/Incrustados/";
-        //int index = ui->comboBox_1->currentIndex();
-        //actualIndex = index;
         root.append(ComboList.at(actualIndex));
-        ui->label_1->setText(root);
+        ui->label_1->setText("Playing: " + ComboList.at(actualIndex));
 
         QByteArray byteArray = root.toUtf8();
         const char* song_route = byteArray.constData();
 
+        ui->comboBox_1->setCurrentIndex(actualIndex);
         qDebug() << "file name: " << song_route;
         admin->statePlay(song_route);
-
+        movie->setPaused(false);
+        updateSlider(true);
     } else {
         qDebug() << "NO MORE SONGS";
     }
+}
+
+void OpenGUI::handlePrev()
+{
+    if((actualIndex > 0) && USB_in){
+        actualIndex -= 1;
+        QString root = "/home/ldiego/Incrustados/";
+        root.append(ComboList.at(actualIndex));
+        ui->label_1->setText("Playing: " + ComboList.at(actualIndex));
+
+        QByteArray byteArray = root.toUtf8();
+        const char* song_route = byteArray.constData();
+
+        ui->comboBox_1->setCurrentIndex(actualIndex);
+        qDebug() << "file name: " << song_route;
+        admin->statePlay(song_route);
+        movie->setPaused(false);
+        updateSlider(true);
+    } else {
+        qDebug() << "NO MORE SONGS";
+    }
+}
+
+void OpenGUI::handleUpdate()
+{
+    int pos = admin->getSongPos();
+    ui->horizontalSlider->setSliderPosition(pos);
+    ui->label_2->setText(QString::number(pos/60) + " : " + QString::number(pos%60));
+    //qDebug() << "Song second:" << pos;
+}
+
+void OpenGUI::handleSlider(int value)
+{
+    if(USB_in){
+        admin->seekTime(value);
+        qDebug() << "New pos:" << value;
+    } else {
+        ui->label_1->setText("Please connect USB data");
+    }
+
 }
 
