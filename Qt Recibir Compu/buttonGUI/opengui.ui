@@ -6,82 +6,163 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>805</width>
-    <height>414</height>
+    <width>810</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>OpenGUI</string>
   </property>
-  <widget class="QLabel" name="label">
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>50</y>
-     <width>81</width>
-     <height>31</height>
+     <x>0</x>
+     <y>0</y>
+     <width>811</width>
+     <height>471</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>14</pointsize>
-    </font>
+   <property name="autoFillBackground">
+    <bool>false</bool>
    </property>
-   <property name="text">
-    <string>Volumen</string>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+     border-image: url(:/images/wallp.jpg);
+
+ }</string>
    </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_1">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>170</y>
-     <width>121</width>
-     <height>31</height>
-    </rect>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
    </property>
-   <property name="text">
-    <string>Pause</string>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
    </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>90</y>
-     <width>98</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Play</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_2">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>100</y>
-     <width>98</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Up</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_3">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>170</y>
-     <width>98</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Down</string>
-   </property>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>30</y>
+      <width>51</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+     border-style: outset;
+	 image: url(:/images/play.png);
+ }
+ QPushButton:pressed {
+     border-style: inset;
+ }</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>30</y>
+      <width>51</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+     border-style: outset;
+	 image: url(:/images/next.png);
+ }</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_3">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>30</y>
+      <width>51</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+     border-style: outset;
+	 image: url(:/images/pause.png);
+ }</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_6">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>30</y>
+      <width>51</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+     border-style: outset;
+	 image: url(:/images/prev.png);
+ }</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>-20</y>
+      <width>291</width>
+      <height>171</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+	 border-image:none;
+}</string>
+    </property>
+    <property name="text">
+     <string>Escuela de Ingeniería Electrónica
+Introducción a los Sistemas Embebidos
+
+Allan Calderón Aguilar
+Diego Solano Monge
+Fabian Solano Villalobos</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>40</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+	 border-image:none;
+}</string>
+    </property>
+    <property name="text">
+     <string>Volumen</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

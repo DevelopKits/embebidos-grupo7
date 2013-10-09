@@ -3,18 +3,22 @@
 
 #include <QWidget>
 #include <stdlib.h>
+#include <QStringList>
 
 namespace Ui {
-class OpenGUI;
+    class OpenGUI;
 }
+
+
 
 class OpenGUI : public QWidget
 {
     Q_OBJECT
+    QStringList ComboList;
+    void updateSlider(bool);
 
 public:
     explicit OpenGUI(QWidget *parent = 0);
-    void getName(const char*);
     ~OpenGUI();
 
 

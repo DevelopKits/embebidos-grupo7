@@ -1,4 +1,6 @@
 #include "mediacontrol.h"
+#include <string.h>
+
 #define AUDIO_CAPS "application/x-rtp,media=audio, clock-rate=89000, width=16, height=16, encoding-name=L16, payload=96"
 
 GMainLoop *loop;
@@ -9,7 +11,6 @@ float varvolumen = 0.5;
 
 MediaControl::MediaControl()
 {
-
 }
 
 void MediaControl::init()
@@ -82,8 +83,8 @@ int MediaControl::statePause(){
 }
 
 int MediaControl::stateUp(){
-    if (varvolumen<=1.0){
-        varvolumen=varvolumen+0.1;
+    if (varvolumen<=1.5){
+        varvolumen=varvolumen+0.05;
         g_object_set (G_OBJECT (volume), "volume", varvolumen, NULL);
     }
     return 0;
@@ -91,7 +92,7 @@ int MediaControl::stateUp(){
 
 int MediaControl::stateDown(){
     if(varvolumen>0.1){
-        varvolumen=varvolumen-0.1;
+        varvolumen=varvolumen-0.05;
         g_object_set (G_OBJECT (volume), "volume", varvolumen, NULL);
     }
     return 0;

@@ -3,8 +3,10 @@
 
 #include <gst/gst.h>
 
+
 class MediaControl
 {
+    void onStateChange(bool);
 
 public:
     MediaControl();

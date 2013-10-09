@@ -9,6 +9,8 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = buttonGUI
+    target.files = buttonGUI
+    target.path = /home/root
 
 TEMPLATE = app
 INSTALLS += target
@@ -25,3 +27,6 @@ HEADERS  += opengui.h \
     mediacontrol.h
 
 FORMS    += opengui.ui
+
+RESOURCES += \
+    MyResourses.qrc
