@@ -13,21 +13,26 @@ int actualIndex = 0;
 QMovie *movie;
 QTimer m_positionTimer;
 bool USB_in = false;
+bool IP_set = false;
 
 
 OpenGUI::OpenGUI(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OpenGUI)
 {
+    this->setWindowFlags(Qt::CustomizeWindowHint); //Set window with no title bar
+    this->setWindowFlags(Qt::FramelessWindowHint); //Set a frameless window
     admin = new MediaControl();
     ui->setupUi(this);
     connect(ui->pushButton_1, SIGNAL(clicked()), this, SLOT(handleButton()));
     connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(handlePlay()));
     connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(handlePause()));
-    connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(handleSeek()));
+    //connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(handleSeek()));
     connect(ui->pushButton_5, SIGNAL(clicked()), this, SLOT(handleNext()));
     connect(ui->pushButton_6, SIGNAL(clicked()), this, SLOT(handlePrev()));
     connect(ui->horizontalSlider, SIGNAL(sliderMoved(int)), this, SLOT(handleSlider(int)));
+    connect(ui->horizontalSlider_2, SIGNAL(valueChanged(int)), this, SLOT(handlePipeline(int)));
+    connect(ui->verticalSlider, SIGNAL(valueChanged(int)), this, SLOT(handleVol(int)));
     connect(&m_positionTimer, SIGNAL(timeout()), this, SLOT(handleUpdate()));
     admin->init();
 
@@ -59,8 +64,8 @@ void OpenGUI::handlePlay()
     if(USB_in){
         qDebug("Current index: %d", ui->comboBox_1->currentIndex());
 
-        //QString root = "/media/sda1/";
-        QString root = "/home/ldiego/Incrustados/";
+        QString root = "/media/sda1/";
+        //QString root = "/home/ldiego/Incrustados/";
         int index = ui->comboBox_1->currentIndex();
         actualIndex = index;
         root.append(ComboList.at(index));
@@ -74,7 +79,7 @@ void OpenGUI::handlePlay()
         ui->label_1->setText("Playing: " + ComboList.at(actualIndex));
         movie->setPaused(false);
 
-        sleep(1);
+        for(int i = 0; i < 1000000; i++){}
 
         int max_len = admin->getSongLen();
         qDebug() << "song length:" << max_len << "seconds.";
@@ -99,11 +104,11 @@ void OpenGUI::handlePause()
 
 void OpenGUI::handleButton()
 {
-
+    ComboList.clear();
     DIR *dir;
     struct dirent *ent;
-    //if ((dir = opendir ("/media/sda1/")) != NULL) {
-    if ((dir = opendir ("/home/ldiego/Incrustados/")) != NULL) {
+    if ((dir = opendir ("/media/sda1/")) != NULL) {
+    //if ((dir = opendir ("/home/ldiego/Incrustados/")) != NULL) {
         /* print all the files and directories within directory */
         while ((ent = readdir (dir)) != NULL) {
             qDebug("%s\n", ent->d_name);
@@ -120,6 +125,7 @@ void OpenGUI::handleButton()
     ui->comboBox_1->clear();
     ui->comboBox_1->addItems(ComboList);
     if(ui->comboBox_1->count() > 0) USB_in = true;
+    else USB_in = false;
 
 }
 
@@ -137,7 +143,8 @@ void OpenGUI::handleNext()
 {
     if(((ui->comboBox_1->count() - 1) > actualIndex) && USB_in){
         actualIndex += 1;
-        QString root = "/home/ldiego/Incrustados/";
+        QString root = "/media/sda1/";
+        //QString root = "/home/ldiego/Incrustados/";
         root.append(ComboList.at(actualIndex));
         ui->label_1->setText("Playing: " + ComboList.at(actualIndex));
 
@@ -158,7 +165,8 @@ void OpenGUI::handlePrev()
 {
     if((actualIndex > 0) && USB_in){
         actualIndex -= 1;
-        QString root = "/home/ldiego/Incrustados/";
+        QString root = "/media/sda1/";
+        //QString root = "/home/ldiego/Incrustados/";
         root.append(ComboList.at(actualIndex));
         ui->label_1->setText("Playing: " + ComboList.at(actualIndex));
 
@@ -173,6 +181,14 @@ void OpenGUI::handlePrev()
     } else {
         qDebug() << "NO MORE SONGS";
     }
+}
+
+void OpenGUI::handleVol(int value)
+{
+    value += 2;
+    float vol = (float)value / 100;
+    qDebug() << "NO MORE SONGS" << vol;
+    admin->newVol(vol);
 }
 
 void OpenGUI::handleUpdate()
@@ -191,6 +207,38 @@ void OpenGUI::handleSlider(int value)
     } else {
         ui->label_1->setText("Please connect USB data");
     }
+
+}
+
+void OpenGUI::handlePipeline(int value)
+{
+    if(!IP_set){
+        QString q_ip = ui->lineEdit->text();
+        if(q_ip.compare("") != 0){
+            QByteArray byteArray = q_ip.toUtf8();
+            const char* ip = byteArray.constData();
+            admin->setIP(ip);
+            IP_set = true;
+
+            bool send = value;
+            qDebug() << "Value from slider" << send;
+            admin->changePipe(send);
+            updateSlider(false);
+            movie->setPaused(true);
+
+        } else {
+            ui->label_1->setText("Please write a valid IP");
+            ui->horizontalSlider_2->setSliderPosition(0);
+        }
+    } else {
+        bool send = value;
+        qDebug() << "Value from slider" << send;
+        admin->changePipe(send);
+        updateSlider(false);
+        movie->setPaused(true);
+    }
+
+
 
 }
 

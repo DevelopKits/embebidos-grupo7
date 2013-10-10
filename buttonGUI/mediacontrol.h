@@ -18,7 +18,9 @@ public:
     int seekTime(int);
     int getSongPos();
     int getSongLen();
-
+    int changePipe(bool);
+    int newVol(float);
+    int setIP(const char*);
 
 };
 

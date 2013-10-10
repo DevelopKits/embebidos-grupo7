@@ -11,5 +11,6 @@
         <file>mario.gif</file>
         <file>guy.gif</file>
         <file>equ.gif</file>
+        <file>logo.png</file>
     </qresource>
 </RCC>

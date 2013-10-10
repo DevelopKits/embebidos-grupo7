@@ -31,6 +31,8 @@ private slots:
     void handlePrev();
     void handleSlider(int);
     void handleUpdate();
+    void handlePipeline(int);
+    void handleVol(int);
 
 private:
     Ui::OpenGUI *ui;
